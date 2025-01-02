@@ -1,0 +1,72 @@
+.nemo-window {
+    .places-treeview {
+        -NemoPlacesTreeView-disk-full-bg-color: lighten($_sidebar_color, 15%);
+        -NemoPlacesTreeView-disk-full-fg-color: $teal;
+        -GtkTreeView-vertical-separator: 7; 
+        .view.cell,
+        iconview.cell {
+            &:hover {
+                background: transparentize(darken($_sidebar_color, 3%), 0.3);
+            }
+            &:selected {
+                background: $selected_bg_color;
+                color: $selected_fg_color;
+            }
+        }
+    }
+
+    .sidebar {
+        background-color: $_sidebar_color; 
+        .view, .iconview, row {
+            color: #98abb2;
+            background-color: transparent;
+        }
+    }
+
+    .nemo-window-pane {
+        widget.entry {
+            background-clip: padding-box;
+            background-color: lighten($base_color, 7%);
+            min-height: 28px;
+            padding: 5px;
+            color: $fg_color;
+            border: 1px solid $selected_bg_color;
+            border-radius: 3px;
+            
+            &:selected {
+                background-color: $selected_bg_color;
+                color: $selected_fg_color;
+            }
+        }
+    }
+
+    toolbar.primary-toolbar {
+        margin-bottom: -1px;
+        background: $headerbar_color;
+        button {
+            @include button(normal-header);
+            margin-top: 5px;
+            margin-bottom: 5px;
+            min-height: 24px;
+            &:hover { 
+                background: transparent;
+                color: $selected_bg_color; 
+            }
+            &:selected,
+            &:active,
+            &:checked { @include button(active-header); }
+        }
+
+        .flat.image-button {
+            border-radius: 4px;
+        }
+    }
+
+    .nemo-inactive-pane .view:not(:selected),
+    .nemo-inactive-pane iconview {
+        background-color: darken($base_color, 6%); 
+    }
+
+    grid > paned > separator { background-image: image($_sidebar_color); }
+    
+}
