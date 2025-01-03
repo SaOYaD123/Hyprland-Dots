@@ -1,7 +1,10 @@
 # Dotfiles
 
-**Dotfiles** is a collection of configuration files aimed at setting up a personalized and efficient Linux environment. This repository includes configurations for various tools and applications, enhancing productivity and aesthetics.
+<h1 align="center">
+  <img src="https://readme-typing-svg.demolab.com/?lines=🎉+Welcome+to+Dotfiles!;💻+Personalize+Your+Linux+Setup!;✨+Boost+Productivity+and+Aesthetics!;&font=Poppins">
+</h1>
 
+**Dotfiles** is a collection of configuration files aimed at setting up a personalized and efficient Linux environment. This repository includes configurations for various tools and applications, enhancing productivity and aesthetics.
 
 ## Review of Arch (btw)
 
@@ -12,7 +15,6 @@
 |---|---|
 | ![4](review/4.png) | ![5](review/5.png) |
 | ![6](review/6.png) | ![7](review/7.png) |
-
 
 ## Table of Contents
 
@@ -60,19 +62,17 @@ To set up your environment using these dotfiles, follow these steps:
 
 After installation, you can start using the configured applications. Modify the configurations as per your preferences:
 
-
 - **zsh**: Ensure zsh is your default shell, then reload configurations:
     ```bash
     chsh -s $(which zsh)
     source ~/.zshrc
     ```
 
-
-### utilities
+### Utilities
 
 - Useful scripts and utilities for system management.
 
-### wallpapers
+### Wallpapers
 
 - Curated collection of wallpapers for personalization.
 
@@ -90,4 +90,7 @@ For any questions, suggestions, or issues, please open an issue in this reposito
 
 ---
 
-Enjoy your personalized Linux setup!
+<h1 align="center">
+  <img src="https://readme-typing-svg.demolab.com/?lines=Enjoy+your+personalized+Linux+setup!+✨;Feel+free+to+star+⭐+the+repository!+❤️;&font=Poppins">
+</h1>
+
