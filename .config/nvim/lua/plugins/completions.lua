@@ -1,15 +1,14 @@
 return {
-  { "giuxtaposition/blink-cmp-copilot" },
   {
     "saghen/blink.cmp",
     lazy = false,
-    build = "cargo build --release",
+    version = "*",
     dependencies = {
       "rafamadriz/friendly-snippets",
       "L3MON4D3/LuaSnip",
       {
         "saghen/blink.compat",
-        optional = true, -- make optional so it's only enabled if any extras need it
+        optional = true, -- make optional so it's only enabled if any plugins need it
         opts = {},
         version = "*",
       },
@@ -45,7 +44,6 @@ return {
           "snippets",
           "buffer",
           "codecompanion",
-          "copilot",
           "lazydev",
           "dadbod",
         },
@@ -54,12 +52,6 @@ return {
             name = "CodeCompanion",
             module = "codecompanion.providers.completion.blink",
             enabled = true,
-          },
-          copilot = {
-            name = "copilot",
-            module = "blink-cmp-copilot",
-            score_offset = 100,
-            async = true,
           },
           lazydev = {
             name = "LazyDev",
@@ -73,7 +65,26 @@ return {
           },
         },
       },
-      keymap = { preset = "super-tab" },
+      keymap = {
+        preset = "super-tab",
+        ["<Tab>"] = {
+          function(cmp)
+            if require("copilot.suggestion").is_visible() then
+              return false -- Do nothing if Copilot has suggestions
+            else
+              if cmp.snippet_active() then
+                cmp.accept()
+              else
+                cmp.select_and_accept()
+              end
+              return true -- Proceed with next commands
+            end
+          end,
+          "snippet_forward",
+          "fallback",
+        },
+      },
+      signature = { enabled = true },
       completion = {
         accept = {
           -- experimental auto-brackets support
@@ -86,6 +97,7 @@ return {
           auto_show_delay_ms = 200,
         },
         menu = {
+          auto_show = true,
           draw = {
             treesitter = { "lsp" },
             columns = { { "kind_icon", "label", gap = 1 }, { "kind" } },
@@ -105,7 +117,7 @@ return {
         },
       },
       appearance = {
-        nerd_font_variant = "normal",
+        nerd_font_variant = "mono",
         kind_icons = {
           Array = " ",
           Boolean = "󰨙 ",

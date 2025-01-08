@@ -2,38 +2,57 @@ return {
 	"ThePrimeagen/harpoon",
 	branch = "harpoon2",
 	dependencies = { "nvim-lua/plenary.nvim" },
+	keys = function()
+		local harpoon = require("harpoon")
+		local keys = {
+			{
+				"<leader>ha",
+				function()
+					harpoon:list():add()
+				end,
+				desc = "Harpoon File",
+			},
+			{
+				"<leader>hq",
+				function()
+					harpoon.ui:toggle_quick_menu(harpoon:list())
+				end,
+				desc = "Harpoon Quick Menu",
+			},
+			{
+				"<leader>hp",
+				function()
+					harpoon:list():prev()
+				end,
+				desc = "Harpoon Go To Previous Buffer",
+			},
+			{
+				"<leader>hn",
+				function()
+					harpoon:list():next()
+				end,
+				desc = "Harpoon Go To Next Buffer",
+			},
+		}
+
+		for i = 1, 5 do
+			table.insert(keys, {
+				"<leader>h" .. i,
+				function()
+					require("harpoon"):list():select(i)
+				end,
+				desc = "Harpoon to File " .. i,
+			})
+		end
+
+		return keys
+	end,
 	config = function()
 		local harpoon = require("harpoon")
 
 		harpoon:setup({})
 
-		vim.keymap.set("n", "<leader>a", function()
-			harpoon:list():add()
-		end, { desc = "Add To Harpoon List" })
-		vim.keymap.set("n", "<C-e>", function()
-			harpoon.ui:toggle_quick_menu(harpoon:list())
-		end, { desc = "Toggle Harpoon Quick Menu" })
-
-		vim.keymap.set("n", "<C-d>", function()
-			harpoon:list():select(1)
-		end, { desc = "Harpoon Select 1" })
-		vim.keymap.set("n", "<C-t>", function()
-			harpoon:list():select(2)
-		end, { desc = "Harpoon Select 2" })
-		vim.keymap.set("n", "<C-n>", function()
-			harpoon:list():select(3)
-		end, { desc = "Harpoon Select 3" })
-		vim.keymap.set("n", "<C-a>", function()
-			harpoon:list():select(4)
-		end, { desc = "Harpoon Select 4" })
-
-		-- Toggle previous & next buffers stored within Harpoon list
-		vim.keymap.set("n", "<C-S-P>", function()
-			harpoon:list():prev()
-		end, { desc = "Harpoon Go To Previous Buffer" })
-		vim.keymap.set("n", "<C-S-N>", function()
-			harpoon:list():next()
-		end, { desc = "Harpoon Go To Next Buffer" })
+		local map = vim.keymap.set
 
 		-- basic telescope configuration
 		local conf = require("telescope.config").values
@@ -55,7 +74,7 @@ return {
 				:find()
 		end
 
-		vim.keymap.set("n", "<leader>sh", function()
+		map("n", "<leader>ht", function()
 			toggle_telescope(harpoon:list())
 		end, { desc = "Harpoon Open Telescope Window" })
 	end,
