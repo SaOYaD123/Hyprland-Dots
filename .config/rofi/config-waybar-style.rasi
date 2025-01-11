@@ -1,4 +1,3 @@
-/* ---- 💫 https://github.com/JaKooLit 💫 ---- */
 /* Main Config (waybar) */
 
 @import "~/.config/rofi/master-config.rasi" 

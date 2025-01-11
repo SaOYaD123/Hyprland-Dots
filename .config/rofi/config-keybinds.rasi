@@ -1,4 +1,3 @@
-/* ---- 💫 https://github.com/JaKooLit 💫 ---- */
 /* Main Config - For Keybinds generation */
 
 @import "~/.config/rofi/master-config.rasi"  
