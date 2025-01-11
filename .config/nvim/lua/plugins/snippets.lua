@@ -11,6 +11,7 @@ return {
 		"L3MON4D3/LuaSnip",
 		build = "make install_jsregexp",
 		enabled = true,
+		version = "*",
 		dependencies = {
 			"mireq/luasnip-snippets",
 			{

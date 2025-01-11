@@ -1,210 +1,297 @@
 return {
-  {
-    "saghen/blink.cmp",
-    lazy = false,
-    version = "*",
-    dependencies = {
-      "rafamadriz/friendly-snippets",
-      "L3MON4D3/LuaSnip",
-      {
-        "saghen/blink.compat",
-        optional = true, -- make optional so it's only enabled if any plugins need it
-        opts = {},
-        version = "*",
-      },
-    },
-    opts_extend = {
-      "sources.completion.enabled_providers",
-      "sources.compat",
-      "sources.default",
-    },
-    ---@module 'blink.cmp'
-    ---@type blink.cmp.Config
-    opts = {
-      snippets = {
-        expand = function(snippet)
-          require("luasnip").lsp_expand(snippet)
-        end,
-        active = function(filter)
-          if filter and filter.direction then
-            return require("luasnip").jumpable(filter.direction)
-          end
-          return require("luasnip").in_snippet()
-        end,
-        jump = function(direction)
-          require("luasnip").jump(direction)
-        end,
-      },
-      sources = {
-        compat = {},
-        default = {
-          "luasnip",
-          "lsp",
-          "path",
-          "snippets",
-          "buffer",
-          "codecompanion",
-          "lazydev",
-          "dadbod",
-        },
-        providers = {
-          codecompanion = {
-            name = "CodeCompanion",
-            module = "codecompanion.providers.completion.blink",
-            enabled = true,
-          },
-          lazydev = {
-            name = "LazyDev",
-            module = "lazydev.integrations.blink",
-            score_offset = 100, -- show at a higher priority than lsp
-          },
-          dadbod = {
-            name = "Dadbod",
-            module = "vim_dadbod_completion.blink",
-            score_offset = 85, -- the higher the number, the higher the priority
-          },
-        },
-      },
-      keymap = {
-        preset = "super-tab",
-        ["<Tab>"] = {
-          function(cmp)
-            if require("copilot.suggestion").is_visible() then
-              return false -- Do nothing if Copilot has suggestions
-            else
-              if cmp.snippet_active() then
-                cmp.accept()
-              else
-                cmp.select_and_accept()
-              end
-              return true -- Proceed with next commands
-            end
-          end,
-          "snippet_forward",
-          "fallback",
-        },
-      },
-      signature = { enabled = true },
-      completion = {
-        accept = {
-          -- experimental auto-brackets support
-          auto_brackets = {
-            enabled = true,
-          },
-        },
-        documentation = {
-          auto_show = true,
-          auto_show_delay_ms = 200,
-        },
-        menu = {
-          auto_show = true,
-          draw = {
-            treesitter = { "lsp" },
-            columns = { { "kind_icon", "label", gap = 1 }, { "kind" } },
-            components = {
-              kind_icon = {
-                text = function(ctx)
-                  if
-                      require("blink.cmp.completion.windows.render.tailwind").get_hex_color(ctx.item)
-                  then
-                    return "󱓻"
-                  end
-                  return ctx.kind_icon .. ctx.icon_gap
-                end,
-              },
-            },
-          },
-        },
-      },
-      appearance = {
-        nerd_font_variant = "mono",
-        kind_icons = {
-          Array = " ",
-          Boolean = "󰨙 ",
-          Class = " ",
-          Codeium = "󰘦 ",
-          Color = " ",
-          Control = " ",
-          Collapsed = " ",
-          Constant = "  ",
-          Constructor = " ",
-          Copilot = " ",
-          Enum = " ",
-          EnumMember = " ",
-          Event = " ",
-          Field = "  ",
-          File = " ",
-          Folder = "  ",
-          Function = "󰊕 ",
-          Interface = " ",
-          Key = " ",
-          Keyword = " ",
-          Method = " ",
-          Module = " ",
-          Namespace = "󰦮 ",
-          Null = " ",
-          Number = "󰎠 ",
-          Object = " ",
-          Operator = " ",
-          Package = " ",
-          Property = " ",
-          Reference = " ",
-          Snippet = " ",
-          String = " ",
-          Struct = "  ",
-          TabNine = "󰏚 ",
-          Text = " ",
-          TypeParameter = " ",
-          Unit = " ",
-          Value = " ",
-          Variable = " ",
-        },
-      },
-    },
-    ---@param opts blink.cmp.Config | { sources: { compat: string[] } }
-    config = function(_, opts)
-      -- setup compat sources
-      local enabled = opts.sources.default
-      for _, source in ipairs(opts.sources.compat or {}) do
-        opts.sources.providers[source] = vim.tbl_deep_extend(
-          "force",
-          { name = source, module = "blink.compat.source" },
-          opts.sources.providers[source] or {}
-        )
-        if type(enabled) == "table" and not vim.tbl_contains(enabled, source) then
-          table.insert(enabled, source)
-        end
-      end
-      opts.sources.compat = nil
-      -- check if we need to override symbol kinds
-      for _, provider in pairs(opts.sources.providers or {}) do
-        ---@cast provider blink.cmp.SourceProviderConfig|{kind?:string}
-        if provider.kind then
-          local CompletionItemKind = require("blink.cmp.types").CompletionItemKind
-          local kind_idx = #CompletionItemKind + 1
+	{
+		"xzbdmw/colorful-menu.nvim",
+		config = function()
+			require("colorful-menu").setup({})
+		end,
+	},
+	{
+		"saghen/blink.cmp",
+		lazy = false,
+		version = "*",
+		dependencies = {
+			"rafamadriz/friendly-snippets",
+			"L3MON4D3/LuaSnip",
+			"mikavilpas/blink-ripgrep.nvim",
+			{
+				"saghen/blink.compat",
+				optional = true, -- make optional so it's only enabled if any plugins need it
+				opts = {},
+				version = "*",
+			},
+		},
+		opts_extend = {
+			"sources.completion.enabled_providers",
+			"sources.compat",
+			"sources.default",
+		},
+		---@module 'blink.cmp'
+		---@type blink.cmp.Config
+		opts = {
+			snippets = {
+				preset = "luasnip",
+				expand = function(snippet)
+					require("luasnip").lsp_expand(snippet)
+				end,
+				active = function(filter)
+					if filter and filter.direction then
+						return require("luasnip").jumpable(filter.direction)
+					end
+					return require("luasnip").in_snippet()
+				end,
+				jump = function(direction)
+					require("luasnip").jump(direction)
+				end,
+			},
+			sources = {
+				compat = {},
+				default = {
+					"lsp",
+					"path",
+					"snippets",
+					"buffer",
+					"codecompanion",
+					"lazydev",
+					"dadbod",
+					-- "markdown",
+					"ripgrep",
+				},
+				providers = {
+					codecompanion = {
+						name = "CodeCompanion",
+						module = "codecompanion.providers.completion.blink",
+						enabled = true,
+					},
+					lazydev = {
+						name = "LazyDev",
+						module = "lazydev.integrations.blink",
+						score_offset = 100, -- show at a higher priority than lsp
+					},
+					dadbod = {
+						name = "Dadbod",
+						module = "vim_dadbod_completion.blink",
+						score_offset = 85, -- the higher the number, the higher the priority
+					},
+					-- markdown = {
+					--   name = "RenderMarkdown",
+					--   module = "render-markdown.integ.blink",
+					--   fallbacks = { "lsp" },
+					-- },
+					ripgrep = {
+						module = "blink-ripgrep",
+						name = "Ripgrep",
+						-- the options below are optional, some default values are shown
+						---@module "blink-ripgrep"
+						---@type blink-ripgrep.Options
+						opts = {
+							-- For many options, see `rg --help` for an exact description of
+							-- the values that ripgrep expects.
 
-          CompletionItemKind[kind_idx] = provider.kind
-          ---@diagnostic disable-next-line: no-unknown
-          CompletionItemKind[provider.kind] = kind_idx
+							-- the minimum length of the current word to start searching
+							-- (if the word is shorter than this, the search will not start)
+							prefix_min_len = 3,
 
-          ---@type fun(ctx: blink.cmp.Context, items: blink.cmp.CompletionItem[]): blink.cmp.CompletionItem[]
-          local transform_items = provider.transform_items
-          ---@param ctx blink.cmp.Context
-          ---@param items blink.cmp.CompletionItem[]
-          provider.transform_items = function(ctx, items)
-            items = transform_items and transform_items(ctx, items) or items
-            for _, item in ipairs(items) do
-              item.kind = kind_idx or item.kind
-            end
-            return items
-          end
+							-- The number of lines to show around each match in the preview
+							-- (documentation) window. For example, 5 means to show 5 lines
+							-- before, then the match, and another 5 lines after the match.
+							context_size = 5,
 
-          -- Unset custom prop to pass blink.cmp validation
-          provider.kind = nil
-        end
-      end
+							-- The maximum file size of a file that ripgrep should include in
+							-- its search. Useful when your project contains large files that
+							-- might cause performance issues.
+							-- Examples:
+							-- "1024" (bytes by default), "200K", "1M", "1G", which will
+							-- exclude files larger than that size.
+							max_filesize = "1M",
 
-      require("blink.cmp").setup(opts)
-    end,
-  },
+							-- Specifies how to find the root of the project where the ripgrep
+							-- search will start from. Accepts the same options as the marker
+							-- given to `:h vim.fs.root()` which offers many possibilities for
+							-- configuration. If none can be found, defaults to Neovim's cwd.
+							--
+							-- Examples:
+							-- - ".git" (default)
+							-- - { ".git", "package.json", ".root" }
+							project_root_marker = ".git",
+
+							-- The casing to use for the search in a format that ripgrep
+							-- accepts. Defaults to "--ignore-case". See `rg --help` for all the
+							-- available options ripgrep supports, but you can try
+							-- "--case-sensitive" or "--smart-case".
+							search_casing = "--ignore-case",
+
+							-- (advanced) Any additional options you want to give to ripgrep.
+							-- See `rg -h` for a list of all available options. Might be
+							-- helpful in adjusting performance in specific situations.
+							-- If you have an idea for a default, please open an issue!
+							--
+							-- Not everything will work (obviously).
+							additional_rg_options = {},
+
+							-- When a result is found for a file whose filetype does not have a
+							-- treesitter parser installed, fall back to regex based highlighting
+							-- that is bundled in Neovim.
+							fallback_to_regex_highlighting = true,
+
+							-- Show debug information in `:messages` that can help in
+							-- diagnosing issues with the plugin.
+							debug = false,
+						},
+					},
+				},
+			},
+			keymap = {
+				preset = "super-tab",
+				["<Tab>"] = {
+					function(cmp)
+						if require("copilot.suggestion").is_visible() then
+							require("copilot.suggestion").accept()
+						else
+							if cmp.snippet_active() then
+								cmp.accept()
+							else
+								cmp.select_and_accept()
+							end
+						end
+					end,
+					"snippet_forward",
+					"fallback",
+				},
+			},
+			signature = { enabled = true },
+			completion = {
+				list = {
+					selection = {
+						auto_insert = false,
+					},
+				},
+				accept = {
+					-- experimental auto-brackets support
+					auto_brackets = {
+						enabled = true,
+					},
+				},
+				documentation = {
+					auto_show = true,
+					auto_show_delay_ms = 200,
+				},
+				menu = {
+					auto_show = true,
+					draw = {
+						treesitter = { "lsp" },
+						columns = { { "kind_icon" }, { "label", gap = 1 } },
+						components = {
+							label = {
+								text = function(ctx)
+									return require("colorful-menu").blink_components_text(ctx)
+								end,
+								highlight = function(ctx)
+									return require("colorful-menu").blink_components_highlight(ctx)
+								end,
+							},
+							kind_icon = {
+								text = function(ctx)
+									if
+										require("blink.cmp.completion.windows.render.tailwind").get_hex_color(ctx.item)
+									then
+										return "󱓻"
+									end
+									return ctx.kind_icon .. ctx.icon_gap
+								end,
+							},
+						},
+					},
+				},
+			},
+			appearance = {
+				nerd_font_variant = "mono",
+				kind_icons = {
+					Array = " ",
+					Boolean = "󰨙 ",
+					Class = " ",
+					Codeium = "󰘦 ",
+					Color = " ",
+					Control = " ",
+					Collapsed = " ",
+					Constant = "  ",
+					Constructor = " ",
+					Copilot = " ",
+					Enum = " ",
+					EnumMember = " ",
+					Event = " ",
+					Field = "  ",
+					File = " ",
+					Folder = "  ",
+					Function = "󰊕 ",
+					Interface = " ",
+					Key = " ",
+					Keyword = " ",
+					Method = " ",
+					Module = " ",
+					Namespace = "󰦮 ",
+					Null = " ",
+					Number = "󰎠 ",
+					Object = " ",
+					Operator = " ",
+					Package = " ",
+					Property = " ",
+					Reference = " ",
+					Snippet = " ",
+					String = " ",
+					Struct = "  ",
+					TabNine = "󰏚 ",
+					Text = " ",
+					TypeParameter = " ",
+					Unit = " ",
+					Value = " ",
+					Variable = " ",
+				},
+			},
+		},
+		---@param opts blink.cmp.Config | { sources: { compat: string[] } }
+		config = function(_, opts)
+			-- setup compat sources
+			local enabled = opts.sources.default
+			for _, source in ipairs(opts.sources.compat or {}) do
+				opts.sources.providers[source] = vim.tbl_deep_extend(
+					"force",
+					{ name = source, module = "blink.compat.source" },
+					opts.sources.providers[source] or {}
+				)
+				if type(enabled) == "table" and not vim.tbl_contains(enabled, source) then
+					table.insert(enabled, source)
+				end
+			end
+			opts.sources.compat = nil
+			-- check if we need to override symbol kinds
+			for _, provider in pairs(opts.sources.providers or {}) do
+				---@cast provider blink.cmp.SourceProviderConfig|{kind?:string}
+				if provider.kind then
+					local CompletionItemKind = require("blink.cmp.types").CompletionItemKind
+					local kind_idx = #CompletionItemKind + 1
+
+					CompletionItemKind[kind_idx] = provider.kind
+					---@diagnostic disable-next-line: no-unknown
+					CompletionItemKind[provider.kind] = kind_idx
+
+					---@type fun(ctx: blink.cmp.Context, items: blink.cmp.CompletionItem[]): blink.cmp.CompletionItem[]
+					local transform_items = provider.transform_items
+					---@param ctx blink.cmp.Context
+					---@param items blink.cmp.CompletionItem[]
+					provider.transform_items = function(ctx, items)
+						items = transform_items and transform_items(ctx, items) or items
+						for _, item in ipairs(items) do
+							item.kind = kind_idx or item.kind
+						end
+						return items
+					end
+
+					-- Unset custom prop to pass blink.cmp validation
+					provider.kind = nil
+				end
+			end
+
+			require("blink.cmp").setup(opts)
+		end,
+	},
 }

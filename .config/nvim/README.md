@@ -50,6 +50,8 @@
     │  │   ├──  keymaps.lua
     │  │   ├──  lazy.lua
     │  │   └──  options.lua
+    │  └── 📂 custom
+    │  │   └──  telescope-preview.lua
     │  └── 📂 plugins
     │      ├──  ai.lua
     │      ├──  annotations.lua
@@ -58,11 +60,11 @@
     │      ├──  autotag.lua
     │      ├──  bufferline.lua
     │      ├──  completions.lua
+    │      ├──  context.lua
     │      ├──  cursor-highlight.lua
     │      ├──  dap.lua
     │      ├──  database.lua
     │      ├──  flash.lua
-    │      ├──  formatting.lua
     │      ├──  git.lua
     │      ├──  grug-far.lua
     │      ├──  harpoon.lua
@@ -71,6 +73,7 @@
     │      ├──  indent-guides.lua
     │      ├──  lazydev.lua
     │      ├──  live-server.lua
+    │      ├──  live-share.lua
     │      ├──  lsp.lua
     │      ├──  markdown.lua
     │      ├──  mdx.lua
@@ -80,7 +83,6 @@
     │      ├──  neotree.lua
     │      ├──  noice.lua
     │      ├──  nvchad.lua
-    │      ├──  nvim-ui.lua
     │      ├──  persistance.lua
     │      ├──  rust.lua
     │      ├──  screenshots.lua
@@ -109,6 +111,7 @@
 - The [lazy-lock.json](./lazy-lock.json) is lazy.nvim package managers lockfile.
 - The [images](./images) directory contains the images that are showcased above.
 - The [init.lua](./init.lua) file is the starting point for the neovim configuration.
+- The [Custom](./lua/custom) directory contains custom configurations for plugins.
 
 </details>
 
