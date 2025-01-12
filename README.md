@@ -26,7 +26,6 @@
 ## Features
 
 - **Application Configurations**: Custom settings for various applications.
-- **Backup of Old Configurations**: Archive of previous configurations.
 - **Wallpapers**: A curated collection of wallpapers.
 
 ## Installation
