@@ -165,3 +165,16 @@ vim.api.nvim_create_autocmd({ "FileType" }, {
 		end)
 	end,
 })
+
+-- Add project with project.nvim automatically
+vim.api.nvim_create_autocmd({ "VimEnter" }, {
+	pattern = "*",
+	callback = function()
+		local cwd = vim.fn.getcwd()
+		local git_dir = cwd .. "/.git"
+
+		if vim.fn.isdirectory(git_dir) == 1 then
+			vim.cmd("AddProject")
+		end
+	end,
+})

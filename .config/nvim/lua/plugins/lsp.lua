@@ -7,6 +7,13 @@ return {
 		build = ":MasonUpdate",
 		opts_extend = { "ensure_installed" },
 		opts = {
+			ui = {
+				icons = {
+					package_installed = " ",
+					package_pending = " ",
+					package_uninstalled = " ",
+				},
+			},
 			ensure_installed = {
 				"stylua",
 				"shfmt",
@@ -38,40 +45,38 @@ return {
 	},
 	{
 		"williamboman/mason-lspconfig.nvim",
+		dependencies = {
+			"williamboman/mason.nvim",
+			"neovim/nvim-lspconfig",
+		},
 		config = function()
 			require("mason-lspconfig").setup({
-				ensure_installed = {
-					"bashls",
-					"cssls",
-					"dockerls",
-					"docker_compose_language_service",
-					"eslint",
-					"emmet_language_server",
-					"lua_ls",
-					"html",
-					"marksman",
-					"markdown_oxide",
-					"pylsp",
-					"tailwindcss",
-					"yamlls",
-					"jsonls",
-					"biome",
-					"mdx_analyzer",
-				},
+				ensure_installed = {},
+				automatic_installation = true,
 			})
 		end,
 	},
 	{
 		"neovim/nvim-lspconfig",
-		dependencies = { "saghen/blink.cmp" },
+		dependencies = {
+			"saghen/blink.cmp",
+			"williamboman/mason-lspconfig.nvim",
+		},
 		opts = function()
 			local servers = {
+				astro = {},
 				bashls = {},
+				biome = {},
 				cssls = {},
-				dockerls = {},
+				css_variables = {},
+				cssmodules_ls = {},
 				docker_compose_language_service = {},
-				eslint = {},
+				dockerls = {},
+				dotls = {},
 				emmet_language_server = {},
+				eslint = {},
+				hyprls = {},
+				jsonls = {},
 				lua_ls = {
 					settings = {
 						lua_ls = {
@@ -81,22 +86,13 @@ return {
 						},
 					},
 				},
-				html = {},
-				marksman = {},
 				markdown_oxide = {},
+				marksman = {},
+				mdx_analyzer = {},
+				prismals = {},
 				pylsp = {},
 				tailwindcss = {},
 				yamlls = {},
-				jsonls = {},
-				biome = {},
-				astro = {},
-				dotls = {},
-				prismals = {},
-				gitlab_ci_ls = {},
-				css_variables = {},
-				cssmodules_ls = {},
-				hyprls = {},
-				mdx_analyzer = {},
 			}
 
 			return {

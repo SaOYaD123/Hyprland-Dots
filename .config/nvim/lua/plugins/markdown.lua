@@ -8,7 +8,8 @@ return {
 			"nvim-tree/nvim-web-devicons",
 		},
 		config = function()
-			require("markview").setup({
+			local markview = require("markview")
+			markview.setup({
 				filetypes = {
 					"markdown",
 					"norg",
@@ -18,6 +19,10 @@ return {
 					"codecompanion",
 				},
 			})
+
+			require("markview.extras.editor").setup()
+			require("markview.extras.checkboxes").setup()
+			require("markview.extras.headings").setup()
 		end,
 	},
 	{
